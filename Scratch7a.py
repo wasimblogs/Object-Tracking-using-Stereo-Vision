@@ -5,7 +5,7 @@ import pickle
 import cv2
 import numpy as np
 
-import TrackElements as te
+import TrackElements2 as te
 
 """
 New in scratch four:
@@ -334,17 +334,23 @@ def rectifyV(imageL, imageR, FIND_DEPTH_OBJECTS=False):
     points contains depth in cm/mm
     """
 
+    # Order of the images are critical
+    # Rectify the stereo-pairs
     rectifiedL = cv2.remap(imageL, mapx1, mapy1, cv2.INTER_LINEAR)
     rectifiedR = cv2.remap(imageR, mapx2, mapy2, cv2.INTER_LINEAR)
 
+    # Draw lines to show, verify rectification
     rectified = np.hstack((rectifiedL, rectifiedR))
     cv2.line(rectified, (0, 150), (640 * 2, 150), 2)
     cv2.line(rectified, (0, 300), (640 * 2, 300), 2)
     cv2.line(rectified, (0, 450), (640 * 2, 450), 2)
 
+    # Compute disparity map from rectified stereo-pairs
+    # Order of images critical
     disparity = stereo.compute(rectifiedL, rectifiedR).astype(np.float32) / 16.0
     if FIND_DEPTH_OBJECTS:
-        depthMap = findDepthObjects(disparity)
+        # depthMap = findDepthObjects(disparity)
+        depthMap = 0
         return rectifiedL, rectifiedR, disparity, depthMap
 
     else:

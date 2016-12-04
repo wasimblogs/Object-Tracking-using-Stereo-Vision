@@ -397,6 +397,13 @@ def go(leftFile, rightFile, SAVE_RESULTS=False, NO_OF_FRAMES=10000, TRACKING=Tru
     noObjectFrameCount = 0
     rejectedObjects = 0
 
+    # Skip Frames
+    for i in xrange(0, 230):
+        retL, frameL = left.read()
+        retR, frameR = right.read()
+
+
+
     while left.isOpened() and right.isOpened():
         # try:
         retL, frameL = left.read()
@@ -423,9 +430,9 @@ def go(leftFile, rightFile, SAVE_RESULTS=False, NO_OF_FRAMES=10000, TRACKING=Tru
 ##                break
 ##
 ##            if k == ord("S") or k == ord("s"):
-##                name = "G:/Stereo/DisparityO/"
-##                num = np.random.randint(0,1000)
-##                nn = str(num)+str(frame_count)
+            name = "G:/Stereo/New/"
+            num = np.random.randint(0,1000)
+            frameNo = str(frame_count)
 ##
 ##                cv2.line(rectified, (0,120),(640*2,120),(255,255,255),3)
 ##                cv2.line(rectified, (0,120*2),(640*2,120*2),(255,255,255),3)
@@ -436,22 +443,22 @@ def go(leftFile, rightFile, SAVE_RESULTS=False, NO_OF_FRAMES=10000, TRACKING=Tru
 ##                cv2.line(inputStereo, (0,120*3),(640*2,120*3),(255,255,255),3)
 ##
 ##
-##                filenameRect = name + "__Rectified__"+nn+".jpg"
-##                filenameDisp = name + "__Disparity__"+nn+".jpg"
-##                filenameInput = name + "__Input__"+nn+".jpg"
-##                filenameDepth = name + "__Depth__" + nn + ".jpg"
+            filenameRect = name + "__Rectified__"+frameNo+".jpg"
+            # filenameDisp = name + "__Disparity__"+frameNo+".jpg"
+            filenameInput = name + "__Input__"+frameNo+".jpg"
+            # filenameDepth = name + "__Depth__" + frameNo + ".jpg"
 ##
-##                cv2.imwrite(filenameRect, rectified)
-##                cv2.imwrite(filenameDisp, disparity)
-##                cv2.imwrite(filenameInput, inputStereo)
+            cv2.imwrite(filenameRect, rectified)
+            # cv2.imwrite(filenameDisp, disparity)
+            cv2.imwrite(filenameInput, inputStereo)
                 # cv2.imwrite(filenameDepth, depthMap)
 
 
             # TRACKING
             # cv2.imwrite("G:/Filters/Disparity.jpg", disparity)
-            rectangles = te.blobs(disparity, DILATE=3)
-
+            rectangles = te.blobs(disparity, DILATE=3, FRAME_NO=frame_count)
             l = len(rectangles)
+
             # Keeping track of no of frames in which no objects are detected.
             if l == 0: noObjectFrameCount += 1
 
@@ -466,7 +473,8 @@ def go(leftFile, rightFile, SAVE_RESULTS=False, NO_OF_FRAMES=10000, TRACKING=Tru
                 cv2.waitKey(10)
 
                 if SAVE_RESULTS:
-
+                    trackFileName = name + "__Tracked__"+frameNo+".jpg"
+                    cv2.imwrite(trackFileName, output)
                     # resDisparity.write(disparity)
                     # resRectify.write(rectifiedL)
                     trackVideo.write(output)
@@ -478,6 +486,7 @@ def go(leftFile, rightFile, SAVE_RESULTS=False, NO_OF_FRAMES=10000, TRACKING=Tru
         if frame_count > NO_OF_FRAMES:
             break
 
+
     # when everything done, release the capture
     left.release()
     right.release()
@@ -487,9 +496,9 @@ def go(leftFile, rightFile, SAVE_RESULTS=False, NO_OF_FRAMES=10000, TRACKING=Tru
 
 if __name__ == "__main__":
     left = 'G:/Stereo/DanceR9.avi'
-
     right = 'G:/Stereo/DanceL9.avi'
 
-    left = 'G:/Stereo/New5L.avi'
-    right = 'G:/Stereo/New5R.avi'
-    go(left, right, SAVE_RESULTS=200, TRACKING=True)
+    # Order of the video is critical
+    left = 'G:/Stereo/New10L.avi'
+    right = 'G:/Stereo/New10R.avi'
+    go(left, right, SAVE_RESULTS=True, TRACKING=True)

@@ -364,9 +364,9 @@ def objectModels(image, frame,rectangles,HISTORY=10, SIMILARITY_THRESH_PERM=1.5,
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def go():
-    video = cv2.VideoCapture("G:/Stereo/DanceR9__Disparity.avi")
-    left = cv2.VideoCapture("G:/Stereo/DanceR9__Rectified.avi")
+def go(rectifiedInput, disparityMap):
+    video = cv2.VideoCapture(disparityMap)
+    left = cv2.VideoCapture(rectifiedLeft)
     # result = cv2.VideoWriter("G:/Stereo/Res_Rectified.avi", -1, 25, (640, 480))
 
     for i in xrange(0, 130):
@@ -404,5 +404,12 @@ def go():
         #     result.release()
         #     break
 
+
 if __name__ == "__main__":
-    go()
+    """
+    This is the module that tracks object from their disparity map and rectified input video
+    """
+
+    disp = "G:/Stereo/DanceR9__Disparity.avi"
+    rectifiedLeft = "G:/Stereo/DanceR9__Rectified.avi"
+    go(rectifiedLeft, disp)

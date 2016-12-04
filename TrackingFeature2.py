@@ -12,6 +12,15 @@ surf = cv2.SURF()
 
 
 def markObject(image, id, r1, col=(255, 255, 255), thick=2):
+    """
+    :param image:
+    :param id:
+    :param r1:
+    :param col:
+    :param thick:
+    :return:
+    Draws rectangle around objects
+    """
     x, y, w, h = r1
     cv2.rectangle(image, (x, y), (x + w, y + h), col, 2)
     cv2.putText(image, str(id), (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2,
@@ -20,6 +29,12 @@ def markObject(image, id, r1, col=(255, 255, 255), thick=2):
 
 
 def blobMovement(r1, r2):
+    """
+    :param r1:
+    :param r2:
+    :return:
+    Measure distance or movement between two blobs
+    """
     # image = np.zeros((640,480), np.uint8)
     #
     x1, y1, w1, h1 = r1
@@ -55,6 +70,14 @@ def blobMovement(r1, r2):
 
 # Goodness bias should matter more than recent bias
 def matchScore(des1, des2, kp, kp1):
+    """
+    :param des1:
+    :param des2:
+    :param kp:
+    :param kp1:
+    :return:
+    Compute the feature score : match of features of two objects
+    """
     # FLANN parameters for matching features
     FLANN_INDEX_KDTREE = 0
     index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
@@ -127,6 +150,7 @@ def calcGoodBias(NO_OF_STATES=20):
 
 
 if __name__ == "__main__":
+
     dispVideo = cv2.VideoCapture("G:/Stereo/DanceR9__Disparity.avi")
     rectVideo = cv2.VideoCapture("G:/Stereo/DanceR9__Rectified.avi")
 

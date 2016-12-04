@@ -245,7 +245,8 @@ def mergeRect(r1, r2):
     return [x,y,h,w]
 
 
-def blobs(image, OVERLAP_THRESH=0.6, GRAYSCALE=False, DILATE=0):
+def blobs(image, OVERLAP_THRESH=0.6, GRAYSCALE=False, DILATE=0, START_THRESH=30,END_THRESH=240,THRESH_STEP=30,
+          SAVE_OBJECTS=True, FRAME_NO=0):
     """
     Returns rectangles of blobs and images marked with blobs
     :param image    : image where blob/objects are to be detected
@@ -263,11 +264,6 @@ def blobs(image, OVERLAP_THRESH=0.6, GRAYSCALE=False, DILATE=0):
     else:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    # DEFINE THRESHOLDING CRITERIA FOR BLOB DETECTION
-    startThresh = 30
-    endThresh = 240
-    THRESH_STEP = 30
-
     # STORES RECTANGLES of blobs
     rects = []
 
@@ -275,9 +271,19 @@ def blobs(image, OVERLAP_THRESH=0.6, GRAYSCALE=False, DILATE=0):
     j = -10  # for consecutive blob detection
 
 
-    for i in xrange(0, int((1.0 * endThresh) / THRESH_STEP)):
+    # Depth based segmentation
+    id = FRAME_NO
+    if SAVE_OBJECTS:
+        name = "G:/Stereo/New/Frame_DISPARITY"+str(id)+"   "+".jpg"
+        cv2.imwrite(name, image)
 
-        filter = cv2.inRange(image, startThresh, startThresh + THRESH_STEP)
+    for i in xrange(0, int((1.0 * END_THRESH) / THRESH_STEP)):
+
+        filter = cv2.inRange(image, START_THRESH, START_THRESH + THRESH_STEP)
+
+        if SAVE_OBJECTS:
+            name = "G:/Stereo/New/Frame"+str(id)+"   "+str(i)+".jpg"
+            cv2.imwrite(name, filter)
 
         # # Debugging
         # cv2.imshow("Filter", filter)
@@ -322,7 +328,7 @@ def blobs(image, OVERLAP_THRESH=0.6, GRAYSCALE=False, DILATE=0):
                                 # IF CONSECUTIVE BLOBS HAVE BEEN DETECTED, MERGE THEM
                                 if diff == 1:
                                     # THIS REQUIRES TUNING
-                                    merge = cv2.inRange(image, startThresh, startThresh + THRESH_STEP + 10)
+                                    merge = cv2.inRange(image, START_THRESH, START_THRESH + THRESH_STEP + 10)
                                     mergeContours, _ = cv2.findContours(filter, cv2.RETR_EXTERNAL,
                                                                         cv2.CHAIN_APPROX_SIMPLE)
                                     for c in mergeContours:
@@ -347,8 +353,9 @@ def blobs(image, OVERLAP_THRESH=0.6, GRAYSCALE=False, DILATE=0):
         else:
             pass
 
-        startThresh += THRESH_STEP
+        START_THRESH += THRESH_STEP
     return rects
+
 
 def drawBlobs(image, rects):
 
